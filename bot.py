@@ -228,4 +228,22 @@ async def main():
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
+    from aiohttp import web
+
+async def health_check(request):
+    return web.Response(text="OK")
+
+async def main():
+    logger.info("FSOCIETY BOT STARTING...")
+    app = web.Application()
+    app.router.add_get("/", health_check)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", int(os.getenv("PORT", 8080)))
+    await site.start()
+    logger.info("Health check server started on port 8080")
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
     asyncio.run(main())
+    
